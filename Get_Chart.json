@@ -1,0 +1,257 @@
+{
+  "name": "Get Chart",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0297a335-5300-4b45-b834-9ca99632d35d",
+              "name": "ticker",
+              "value": "={{ $json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -900,
+        160
+      ],
+      "id": "a2e95cc1-7896-4893-b3e2-2af4007d03ee",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.chart-img.com/v2/tradingview/advanced-chart/storage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "F4ongJWMBVRQmCtie9II3dcO3Enl9Nc9gfVXK212"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"height\": 300,\n  \"theme\": \"dark\",\n  \"interval\": \"15m\",\n  \"session\": \"extended\",\n  \"symbol\": \"OANDA:{{ $json.ticker }}\",\n  \"timezone\": \"America/New_York\"\n} ",
+        "options": {
+          "batching": {
+            "batch": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -680,
+        240
+      ],
+      "id": "88689184-8555-4f1d-8372-b14cb98857ad",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=# Role\nYou are an expert financial analyst specializing in technical analysis of\nstock charts. Your role is to analyze financial charts provided to you and\noffer comprehensive insights into the technical aspects, including\ncandlestick patterns, MCD indicators, volume trends, and overall market\nsentinent. You must provide a detailed breakdmm of the chart, highlighting\nkey areas of interest and actionable insights.\nWhen analyzing a stock chart, always include the following:\n1. • *Candlestick Analysis* * :\n- Identify and explain any significant candlestick patterns (e.g.,\nbullish engulfing, doji, harner) .\n- C—ent on the overall trend (bullish, bearish, or sideways) .\n- Highlight any breakout or pullback zones.\n2. Analysis* * :\n- Describe the current state of the MCD line and Signal line (e.g.,\nbullish crossover, bearish crossover).\n3.\n- Discuss the MCD histogram and its implications for\n- Identify any divergences between the MACD and the price action.\n••volume Analysis••:\n- Highlight any significant changes in trading volume.\nExplain volLne supports or contradicts price movements.\n- Indicate any unusual spikes in volume that may suggest institutional\nactivity.\n4. * *Support and Resistance Levels* e:\nIdentify key support and resistance zones based on the chart.\nDiscuss the importance of these levels for potential reversals or\nbreakouts.\nS. Insights* *:\nProvide clear guidance on potential buy, sell, or hold strategies.\nSuggest what to watch for in the near term, including confirmation\nsignals or potential risks.\n6. Observations••:\n- Note any patterns or indicators that are relevant to the malysis.\n- Offer insights into narket sentiment or other broader trends based on charts",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -200,
+        280
+      ],
+      "id": "a069b2af-8cb4-4761-8743-8046ae116b53",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "UuJRTWAPYAEk0pTm",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "867894845",
+        "file": "={{ $('Download Chart').item.json.url }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        260
+      ],
+      "id": "14726109-174f-44e5-b871-851b8c74b53e",
+      "name": "Telegram",
+      "webhookId": "9434328a-1dbb-4051-9505-a21e2c8edc8f",
+      "credentials": {
+        "telegramApi": {
+          "id": "yPMGrHtaFGXfXLjH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1120,
+        120
+      ],
+      "id": "f51fd5c8-4826-421f-871e-c913e24011e6",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -420,
+        280
+      ],
+      "id": "99f733ec-204b-4c21-ad81-ca4dd65035c1",
+      "name": "Download Chart"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "90d0374d-2114-48f5-be17-da8c670b44a7",
+              "name": "Response",
+              "value": "={{ $('OpenAI1').item.json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        200
+      ],
+      "id": "832ee443-7947-40d7-ba35-dd37b2b3072c",
+      "name": "Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Download Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Chart": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7a45897a-387e-46c1-b991-d67c0f55d3ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "ugLEeOMCvRBFu50l",
+  "tags": []
+}

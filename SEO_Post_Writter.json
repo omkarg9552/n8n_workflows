@@ -1,0 +1,303 @@
+{
+  "name": "SEO Post Writter",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -300
+      ],
+      "id": "d3fc82a4-bd48-4bdd-a306-430d1fe92c98",
+      "name": "When chat message received",
+      "webhookId": "66abe9db-2363-4728-a80e-ce67b00488af"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Web Searcher Agent. The user\nwill provide you with a topic or\nheadline for an SEO blog article. Your\ntask is to search the web for reliable,\nfactual information on this topic and\nsummarize key points to provide helpful\ncontent. Be concise and clear, focusing\non details that would enhance the\narticle's SEO value and informative\nquality."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -340,
+        -300
+      ],
+      "id": "a289e99b-ad58-4ad9-a665-8b4deb6ea070",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -100
+      ],
+      "id": "6be39350-f780-49aa-9ec8-1deb011fc6e1",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uNrczwEMjpt0v3y5",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an SEO Content Writer. You'll receive\na summary:  {{ $json.output }} with factual\ninformation on a topic. Your task is to craft\na highly engaging, SEO—optimized blog article\nthat is informative, well—structured, and\naimed at outranking competitors. Prioritize\nreadability, integrate relevant keywords\nnaturally, and include actionable insights,\nexamples, or tips that add unique value to the\nreader.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        60,
+        -280
+      ],
+      "id": "6ff62158-1373-485e-8979-4dfc22de0f63",
+      "name": "SEO Writter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Formatter. You'll receive a refined\narticle draft:{{ $json.output }}.\nYour task is to format it for optimal\nreadability and SEO impact. Use headings (HI,\nH2, H3) where appropriate, create short\nparagraphs, and add bullet points or numbered\nlists for clarity. Ensure each section flows\nlogically, and highlight important information\nfor better reader engagement. Check that\nkeywords are strategically placed without\ndisrupting the flow.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        620,
+        -20
+      ],
+      "id": "339aefda-b684-4534-a100-728146171c5e",
+      "name": "Formatter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an Editor. You'll receive a draft:{{ $json.output }} of a blog article.\nYour task is to thoroughly check for grammar,\npunctuation, and readability. Ensure that the\ntext flows smoothly, is free from errors, and\nmaintains a clear, engaging tone. Make any\nnecessary adjustments to improve clarity,\nstructure, and accessibility for a broad\naudience .1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        300,
+        -20
+      ],
+      "id": "f70f7098-7866-43b1-9d5b-d90b974ce59f",
+      "name": "Editor"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $json.output }}",
+        "name": "=SEO_Blog_{{ $now }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/5/folders/1AiAgFNxqAwi51NVlC5JH1PLiBpCDn1L6",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        960,
+        -20
+      ],
+      "id": "8523b45f-6b2e-449c-b0e9-bfc481aadadb",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "45s8nxI2eT4Ty0nM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -120
+      ],
+      "id": "b0c7dc7b-31db-49dc-91ff-151f22306c5a",
+      "name": "Writter",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tcpAhMhENkUekmgt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        300,
+        160
+      ],
+      "id": "6a52647a-752d-4898-af2f-152611149606",
+      "name": "Gemini Editor",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tcpAhMhENkUekmgt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        200
+      ],
+      "id": "1bdb5cdc-f497-4da0-b136-a8f5cc086af2",
+      "name": "Gemini Formatter",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tcpAhMhENkUekmgt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "SEO Writter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEO Writter": {
+      "main": [
+        [
+          {
+            "node": "Editor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor": {
+      "main": [
+        [
+          {
+            "node": "Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatter": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SEO Writter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Editor": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Formatter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Formatter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eca62356-0a82-4ffd-822e-9a786b111103",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ff5719abc30e2dc94cef6492420f58650be6b6c978b7fcb8ef96e724891c384"
+  },
+  "id": "6MF1NPplmWET8gBL",
+  "tags": []
+}

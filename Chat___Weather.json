@@ -1,0 +1,171 @@
+{
+  "name": "Chat & Weather",
+  "nodes": [
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        160,
+        -240
+      ],
+      "id": "11b12da8-9e04-4ee6-8d28-4654790b45a6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        100,
+        80
+      ],
+      "id": "e80489f0-4d0e-45de-8af6-e126bd2b0c18",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LyqLOtO3eATceNVZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -40
+      ],
+      "id": "e2add834-99ec-4d9c-92fe-3c254db3a2cd",
+      "name": "When chat message received",
+      "webhookId": "74ccfbc9-06d8-434d-ac00-b9267370d7cd"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        420,
+        80
+      ],
+      "id": "aa4558ad-8154-438a-8ad6-eab6aabae02f",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        80
+      ],
+      "id": "a0bebf9f-2cdb-43c7-b25d-304243ce5f8a",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "Weather12",
+        "description": "Use this too to get the current weather for the specific city. Input should be name of the city",
+        "workflowId": {
+          "__rl": true,
+          "value": "knAopTJsKz4mNs0f",
+          "mode": "list",
+          "cachedResultName": "Gmail Automation — My workflow 2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        560,
+        80
+      ],
+      "id": "c9e4be35-6ebb-4aba-8645-bb8646b78581",
+      "name": "WeatherTool"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WeatherTool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d2b40d89-12d5-4641-bdd7-0c2890ac69f4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "TsXfYBzqFgJSdVEt",
+  "tags": []
+}

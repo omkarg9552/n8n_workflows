@@ -1,0 +1,543 @@
+{
+  "name": "Research agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        300
+      ],
+      "id": "929a30ba-b532-4ead-b900-896d0a267136",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an advanced Research Planning Agent\ndesigned to take a given human query ({{ $json.message.text }}) and generate a detailed,\nstructured research plan. Your goal is to\ndeconstruct the query into precise, high-value\nsub-questions that ensure a comprehensive and\nintelligent exploration of the topic.\nInstruction:\nUnderstand the user's input ({{ $json.chatInput }}) and determine the core\nintent behind the query.\nBreak down the query into welt—structured,\nintelligent sub—questions that collectively\nyield the most insightful results.\nPrioritize depth, clarity, and coverage,\nensuring all relevant aspects are explored.\nOptimize for research efficiency—avoid\nredundant or overly broad sub-questions.\nConsider multiple dimensions, such as:\nDefinitions & Context: What key terms or\nconcepts need clarification?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -520,
+        40
+      ],
+      "id": "fe92e594-bd4c-4f71-ab63-4fc55e2dc4ca",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        240,
+        540
+      ],
+      "id": "a70098d4-52b6-47eb-9ced-7fdb79a44899",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        640,
+        540
+      ],
+      "id": "69e6f9fc-7d6c-4fb3-8343-e85f17334271",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $json.output }}",
+        "name": "Research_report_form_{{ $now }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ACVGLqPjQRa9Rd8acU3bOKyYZVpQ6K4q",
+          "mode": "list",
+          "cachedResultName": "Research_Report",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ACVGLqPjQRa9Rd8acU3bOKyYZVpQ6K4q"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        920,
+        340
+      ],
+      "id": "54238f1b-9c90-4556-8805-c7bf1ded965d",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4B6BW6RgWWfyEYjj",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        440,
+        120
+      ],
+      "id": "2f366b5f-a4f8-43e3-8fc5-2709cf7b95b6",
+      "name": "OpenRouter Chat Model3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $json.output }}",
+        "name": "Research_report_form_{{ $now }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ACVGLqPjQRa9Rd8acU3bOKyYZVpQ6K4q",
+          "mode": "list",
+          "cachedResultName": "Research_Report",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ACVGLqPjQRa9Rd8acU3bOKyYZVpQ6K4q"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        840,
+        -60
+      ],
+      "id": "ede9bc13-7787-4760-9316-822b4fa65de6",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4B6BW6RgWWfyEYjj",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        40
+      ],
+      "id": "76058222-7ea4-4f49-96ea-f5fe485be437",
+      "name": "Telegram Message",
+      "webhookId": "c40829c3-4d19-4d37-9153-88e28bb2d745",
+      "credentials": {
+        "telegramApi": {
+          "id": "mn3BfrE0B1pPHp3S",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1d40c12c-00c0-47aa-be8a-60a5754de267",
+              "name": "truncatedOutput",
+              "value": "={{$json[\"output\"].replace(/#/g, \"\").replace(/\"/g, '\\\\\"').substring(0, 1500)}}\n\n\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -180,
+        60
+      ],
+      "id": "d4e19620-ee2b-4e9a-bd7a-e0d9cfc960f1",
+      "name": "Remove Special char"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08CU49D4KV",
+          "mode": "list",
+          "cachedResultName": "ai_agent_aprroval"
+        },
+        "message": "=Send the research plan draft: ({{ $json.truncatedOutput }})to Human user and wait for a response ",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Approval Request",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Denied"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What changes do you want me to do?",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        40
+      ],
+      "id": "82b45185-74a0-4681-bd49-d7581d94be49",
+      "name": "Slack approval",
+      "webhookId": "f33142db-55f9-4391-bed2-0c4429af2606",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "vl3ocbiwMPELQ32H",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "76131767-9d3a-4265-a471-46ee01377758",
+              "leftValue": "={{ $json.data['Approval Request']}}",
+              "rightValue": "Approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        180,
+        60
+      ],
+      "id": "bdb95c5a-ecaf-43e8-ac62-e1e717d3c4aa",
+      "name": "Approved or Denied"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Take the initial Draft:({{ $('AI Agent').item.json.output }}). item.json.output and\nrewrite it with including this question in the\nplan: ({{ $('Slack approval').item.json.data['What changes do you want me to do?'] }}) item. json.data( 'What changes do you\nwant me do 'J",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        340
+      ],
+      "id": "1dd13ef0-dc9d-4df5-89d5-4cf310436ee9",
+      "name": "Rewrite Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Always start by usiig the SerpAPI tool to\ngather up-to—date and relevant information\nfrom the web. Then, review the research plan\ngenerated by the previous agent:\n{{ $('AI Agent').item.json.output }}, and {{ $('Approved or Denied').item.json.data['What changes do you want me to do?'] }}\nquestion raised by the user based on the\ncollected data.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        560,
+        340
+      ],
+      "id": "b77df920-a15f-4371-91a3-6b78902d4f82",
+      "name": "Web Search agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Always start by usiig the SerpAPI tool to\ngather up-to—date and relevant information\nfrom the web. Then, review the research plan\ngenerated by the previous agent:\n{{ $('AI Agent').item.json.output }}, and thoroughly research and answer every\nquestion raised by the user based on the\ncollected data.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        420,
+        -60
+      ],
+      "id": "2113f646-059d-4c09-b14b-a664a539b861",
+      "name": "Web Search agent1"
+    },
+    {
+      "parameters": {
+        "chatId": "867894845",
+        "text": "=Document is generated on Google drive with this Id: {{ $json.id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1140,
+        160
+      ],
+      "id": "7e58c688-00f7-466d-bb43-99311a2e9d12",
+      "name": "Telegram",
+      "webhookId": "0daaacf0-cce4-4c4b-9b1f-56b29bc1cb70",
+      "credentials": {
+        "telegramApi": {
+          "id": "mn3BfrE0B1pPHp3S",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Remove Special char",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Web Search agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Web Search agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Message": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Special char": {
+      "main": [
+        [
+          {
+            "node": "Slack approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack approval": {
+      "main": [
+        [
+          {
+            "node": "Approved or Denied",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved or Denied": {
+      "main": [
+        [
+          {
+            "node": "Web Search agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rewrite Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Agent": {
+      "main": [
+        [
+          {
+            "node": "Web Search agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search agent": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search agent1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b0048f42-3601-412f-abd5-c10a2ffa8cc9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "R31IMlX8IFj6a5Tx",
+  "tags": []
+}

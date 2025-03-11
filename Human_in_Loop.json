@@ -1,0 +1,207 @@
+{
+  "name": "Human in Loop",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -220,
+        -100
+      ],
+      "id": "ae23c060-c022-445d-818f-46edc03fbf04",
+      "name": "When chat message received",
+      "webhookId": "3e8ee651-13b3-42ab-af70-47ed207c42e5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "take the topic given by the user ({$json.chatlnput}} and write the best\ndad joke for it."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        -100
+      ],
+      "id": "a951dcb2-ceea-4c64-8ebf-29f4999cd19b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        120
+      ],
+      "id": "19836cb5-3ce7-4815-b964-01145842d2c7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        100,
+        120
+      ],
+      "id": "fb891d6f-7f00-4268-a278-b09a768cb149",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "omghodke2000@gmail.com",
+        "subject": "Wait for Approval",
+        "message": "={{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        -100
+      ],
+      "id": "98d2dfc1-85f7-4190-8973-f357acea932e",
+      "name": "Gmail",
+      "webhookId": "91ff0c10-8ea9-4aac-bd0b-5b2feb063f2f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d9b3d80a-153a-4911-aaa0-657b3135db22",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        580,
+        -100
+      ],
+      "id": "3620798f-d65c-452a-a81a-5bec4151b3c4",
+      "name": "If"
+    }
+  ],
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "sessionId": "8587a3a0dd434abb8a93c847ae990b6e",
+          "action": "sendMessage",
+          "chatInput": "Cat vs dog"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a87459b6-8f02-4d79-868f-d65778c693a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "4peogqJigXohzRgR",
+  "tags": []
+}

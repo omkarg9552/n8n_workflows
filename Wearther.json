@@ -1,0 +1,185 @@
+{
+  "name": "Wearther",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -180
+      ],
+      "id": "cfc1b110-4504-4e1d-a039-3cad3c23dbb0",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c2f2094-25a5-428e-aec6-3a4db85972c8",
+              "name": "query",
+              "value": "Mumbai",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -120
+      ],
+      "id": "ec10a32e-5e80-4740-84b0-5ea61f7df3fe",
+      "name": "Query"
+    },
+    {
+      "parameters": {
+        "cityName": "= {{ $json.query }}"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -120
+      ],
+      "id": "823234c3-62ae-43cb-9f38-518f8b37d615",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "7WkpM2NZSFqjgBtD",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please convert the input from OpenWeathermap into Plain English with a friendly tone. To make it pettier use relevant emoji's \n\nHere is the data:  [\n\"main\": \n{\n\"temp\": \n25.99,\n\"feels_like\": \n25.99,\n\"temp_min\": \n25.99,\n\"temp_max\": \n25.99,\n\"pressure\": \n1012,\n\"humidity\": \n61,\n\"sea_level\": \n1012,\n\"grnd_level\": \n1012\n},\n\"visibility\": \n3000,\n\"wind\": \n{\n\"speed\": \n2.57,\n\"deg\": \n300\n},\n\"clouds\": \n{\n\"all\": \n5\n},\n\"dt\": \n1738161425,\n\"sys\": \n{\n\"type\": \n1,\n\"id\": \n9052,\n\"country\": \n\"IN\",\n\"sunrise\": \n1738115011,\n\"sunset\": \n1738155583\n},\n\"timezone\": \n19800,\n\"id\": \n1275339,\n\"name\": \n\"Mumbai\",\n\"cod\": \n200\n}\n]",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        20,
+        -140
+      ],
+      "id": "08d6a3de-5288-4bde-8c5f-711fadae0534",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.0-pro-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        80
+      ],
+      "id": "37501e06-4f92-44b7-b055-ae983c0bc262",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LyqLOtO3eATceNVZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8775f3eb-3770-49f5-a29d-04e0a14eec46",
+              "name": "Response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -120
+      ],
+      "id": "9f00f976-2b9d-4fc9-82d1-97125283abd6",
+      "name": "Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b03d1f3a-3696-4753-a891-65206e4bcd77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "knAopTJsKz4mNs0f",
+  "tags": []
+}

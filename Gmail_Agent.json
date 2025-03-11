@@ -1,0 +1,449 @@
+{
+  "name": "Gmail Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1000,
+        -460
+      ],
+      "id": "e1489707-7c9f-4f16-9b29-cd02662c494f",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "S34JiM3Cwn9iMkYY",
+          "name": "omghodke2000"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Billing",
+              "description": "Classify emails that relate to payment inquiries, invoices, charges, or financial transactions.\n"
+            },
+            {
+              "category": "consultation ",
+              "description": "Classify emails that inquire about services, availability, or scheduling a consultation."
+            },
+            {
+              "category": "Customer Support",
+              "description": "Classify emails from current clients requesting help with technical issues, product usage, or service—related assistance."
+            },
+            {
+              "category": "Other",
+              "description": "Classify emails related to general inquiries, feedback, promotions, partnerships, or internal communications that do not require technical support."
+            },
+            {
+              "category": "Priority ",
+              "description": "Classify emails based on urgency, identifying high-priority messages that require immediate attention, such as critical issues, escalations, or time-sensitive requests."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        -240
+      ],
+      "id": "49223ce3-8f4e-4a92-a39a-20ea9f3a68a2",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        -40
+      ],
+      "id": "3df87a32-9bc2-4c95-8ef3-0ab442d582dc",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "d1cagiKwxMV9jCXO",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_1734798522643892877"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -200,
+        -380
+      ],
+      "id": "9137f53a-9edd-427e-bc24-bc3093d4365a",
+      "name": "Consultation",
+      "webhookId": "4c10af47-525a-47ad-b322-85b9f2c17aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_3349241367665792506"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -200,
+        -200
+      ],
+      "id": "828d91ec-4fea-4b89-a30e-ec5c90d23b80",
+      "name": "Customer Support",
+      "webhookId": "4c10af47-525a-47ad-b322-85b9f2c17aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_7646268997458173283"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -200,
+        -560
+      ],
+      "id": "427bc240-af60-474d-b89a-e86ec4271fc1",
+      "name": "Billing",
+      "webhookId": "4c10af47-525a-47ad-b322-85b9f2c17aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_8448608349351093505"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "ce3bf0f2-03c5-4301-8b5e-a3599f647ba9",
+      "name": "Other",
+      "webhookId": "4c10af47-525a-47ad-b322-85b9f2c17aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_3531855076593088128"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -180,
+        200
+      ],
+      "id": "8619b108-5e22-498f-a4b5-27c48d6d64f0",
+      "name": "Priority",
+      "webhookId": "4c10af47-525a-47ad-b322-85b9f2c17aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "openai/gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "OPENAI/GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your task is to take the unread emails Email\nand craft a response accordingly to it. Get\nthe unread email from body {{ $('Text Classifier').item.json.snippet }}\nand then write it for the email based on: \n {{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        560,
+        -300
+      ],
+      "id": "c48f77a7-bacd-43b2-aaff-377c6b05042b",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "rvfBXysvHHITwrKa",
+          "name": "OpenRouter 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Text Classifier').item.json.Subject }}",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "threadId": "={{ $('Text Classifier').item.json.threadId }}",
+          "sendTo": "={{ $('Text Classifier').item.json.From }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        -380
+      ],
+      "id": "03b1e6a5-e212-44f2-aef6-22f02662c9b4",
+      "name": "Draft Email",
+      "webhookId": "4ce8be92-24db-4cc4-ace6-76344088b1cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nGi4407MBw7wJelw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08CRU3BDBM",
+          "mode": "list",
+          "cachedResultName": "all-helpdesk"
+        },
+        "text": "New Customer support Ticket",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        60,
+        -220
+      ],
+      "id": "cb8fa4b1-010e-4158-91b7-d74721630736",
+      "name": "Slack",
+      "webhookId": "f3d7b4b5-af13-46fc-bdaf-32bf98909ea0",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "vl3ocbiwMPELQ32H",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Consultation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Other",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Billing": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Other": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Draft Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priority": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultation": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb754c4a-f7b2-44a9-baa2-278e5d4aa6a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "8bU3bbxed7GU9kj8",
+  "tags": []
+}

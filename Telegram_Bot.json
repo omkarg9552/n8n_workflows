@@ -1,0 +1,175 @@
+{
+  "name": "Telegram Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        -60
+      ],
+      "id": "bf25cb44-e4a6-4802-b744-4411d89eb72f",
+      "name": "Telegram Trigger",
+      "webhookId": "01bc094a-2099-40ec-9082-7cd837a1f978",
+      "credentials": {
+        "telegramApi": {
+          "id": "yPMGrHtaFGXfXLjH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -180,
+        -40
+      ],
+      "id": "7833921e-d1ab-4965-a21a-20a18fe6ab7f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "867894845",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -60
+      ],
+      "id": "d42c39ff-1483-4462-a7ac-ac1d58aede23",
+      "name": "Telegram",
+      "webhookId": "7665424a-6bd7-40d8-9ce6-43f1614595b2",
+      "credentials": {
+        "telegramApi": {
+          "id": "yPMGrHtaFGXfXLjH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "=deepseek/deepseek-r1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -200,
+        140
+      ],
+      "id": "73aa4bd2-6327-4713-b297-dd06fcd9d8ec",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "T2Dq98H5OaRBMeQs",
+          "name": "Openrouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "get_chart",
+        "workflowId": {
+          "__rl": true,
+          "value": "ugLEeOMCvRBFu50l",
+          "mode": "list",
+          "cachedResultName": "Gmail Automation — Get Chart"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        440,
+        260
+      ],
+      "id": "3eb49a32-e686-4cea-bbd3-06376e42a317",
+      "name": "Get Chart"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chart": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c7143948-7488-46cb-ab2f-f1f62af7e935",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df878f221a3c1be25a127ec7016f7c45c3f8c170c253778ba771f4df214aa90"
+  },
+  "id": "Y6Mmwd7vI3zzOFkn",
+  "tags": []
+}
