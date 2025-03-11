@@ -1,0 +1,233 @@
+{
+  "name": "Resume shortlisting",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Fetch Resumes from Email",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1f47cfb9-95ee-4abd-b487-c7240db2d81b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Save Resume to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 1,
+      "position": [
+        200,
+        0
+      ],
+      "id": "695caa4f-2771-4b20-9feb-121f88e66025"
+    },
+    {
+      "parameters": {
+        "url": "https://api.affinda.com/v2/resumes",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "name": "Parse Resume using Affinda API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "6bc75621-522f-4b07-afc1-610c7859f3c9"
+    },
+    {
+      "parameters": {
+        "functionCode": "const jobSkills = ['Python', 'SQL', 'Machine Learning'];\nconst candidateSkills = $input.item.skills.split(', ');\nlet score = 0;\ncandidateSkills.forEach(skill => {\n    if (jobSkills.includes(skill)) {\n        score += 10;\n    }\n});\nreturn { score };"
+      },
+      "name": "Score Candidate",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "f537e3b6-5ee6-4265-b2b2-bf6d643fbb45"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "range": "A1",
+        "options": {}
+      },
+      "name": "Save Candidate Data to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "4314c562-c48a-4d7f-b7c3-99a7a0103d7a"
+    },
+    {
+      "parameters": {
+        "resource": "slack"
+      },
+      "name": "Notify HR via Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "c29b4a14-0b22-4580-9d03-e6a0e0747990"
+    },
+    {
+      "parameters": {
+        "subject": "Shortlisted Candidate Alert",
+        "text": "Candidate {{$json[\"name\"]}} has been shortlisted with a score of {{$json[\"score\"]}}.\n\nReview the details in Google Sheets.",
+        "options": {}
+      },
+      "name": "Notify HR via Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "20ecc431-5767-4ee0-9566-59c45bd49f38"
+    },
+    {
+      "parameters": {
+        "url": "https://api.calendly.com/scheduling_links",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "name": "Schedule Interview via Calendly",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        0
+      ],
+      "id": "cce9734b-431b-46cd-9f54-31a9031f6012"
+    },
+    {
+      "parameters": {
+        "subject": "Interview Invitation",
+        "text": "Hello {{$json.name}}, you have been shortlisted. Please schedule your interview using the following link: {{$json.calendly_link}}",
+        "options": {}
+      },
+      "name": "Send Interview Invitation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        0
+      ],
+      "id": "8d3f83de-ef47-4695-bd34-3df86f13441e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Resumes from Email": {
+      "main": [
+        [
+          {
+            "node": "Save Resume to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Resume to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Parse Resume using Affinda API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Resume using Affinda API": {
+      "main": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Candidate": {
+      "main": [
+        [
+          {
+            "node": "Save Candidate Data to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Candidate Data to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Notify HR via Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify HR via Slack": {
+      "main": [
+        [
+          {
+            "node": "Notify HR via Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify HR via Email": {
+      "main": [
+        [
+          {
+            "node": "Schedule Interview via Calendly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Interview via Calendly": {
+      "main": [
+        [
+          {
+            "node": "Send Interview Invitation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cb04642a-3e13-4b0d-88a1-c3e219cc00e9",
+  "meta": {
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "pYZbZNOrkhv4tGba",
+  "tags": []
+}

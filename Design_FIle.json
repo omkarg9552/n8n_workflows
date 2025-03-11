@@ -1,0 +1,225 @@
+{
+  "name": "Design_FIle",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload",
+        "options": {}
+      },
+      "name": "File Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        200
+      ],
+      "id": "35da128a-a207-475c-9506-c117f7353f22",
+      "webhookId": "a5bc2f85-b37a-4bcf-a456-2fddbf22b659"
+    },
+    {
+      "parameters": {
+        "functionCode": "return { fileType: $json[\"body\"].fileType };"
+      },
+      "name": "Detect File Type",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        200
+      ],
+      "id": "f93acb2e-b5f9-4257-b73f-4bfb93d3396e"
+    },
+    {
+      "parameters": {},
+      "name": "Google Vision OCR (for Images & PDFs)",
+      "type": "n8n-nodes-base.googleVision",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        100
+      ],
+      "id": "4db6a5cf-e97c-4432-8b61-9c554be115ba"
+    },
+    {
+      "parameters": {
+        "text": "{{$node[\"Google Vision OCR (for Images & PDFs)\"].json.text}}"
+      },
+      "name": "Translate to Japanese",
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 1,
+      "position": [
+        -540,
+        -40
+      ],
+      "id": "34e7288f-3096-4124-afb0-ec83dd8f735a"
+    },
+    {
+      "parameters": {
+        "text": "{{$node[\"Google Vision OCR (for Images & PDFs)\"].json.text}}"
+      },
+      "name": "Translate to Chinese",
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        280
+      ],
+      "id": "05eb3168-01eb-4e7d-b15f-2a5d91cbf376"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "AutoCAD API (for DWG/DXF)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        300
+      ],
+      "id": "b3091581-c96c-4cdd-9d10-90789eb1dc48"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "drawings",
+        "fields": [
+          "originalText",
+          "japaneseText",
+          "chineseText"
+        ],
+        "options": {}
+      },
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        100
+      ],
+      "id": "4ab461cc-0206-4b86-8428-fdd6cf7b0aeb"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "query",
+        "options": {}
+      },
+      "name": "Query Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        600
+      ],
+      "id": "06689c02-efbc-4885-8839-92cbf8792fb1",
+      "webhookId": "d00f32b4-9e51-474b-9e26-e42cf3af8c80"
+    },
+    {
+      "parameters": {
+        "collection": "drawings",
+        "options": {},
+        "query": "{\"originalText\": {\"$regex\": \"{{$json[\"body\"].query}}\"} }"
+      },
+      "name": "Search Database",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        600
+      ],
+      "id": "3de3cc25-7c2b-4295-b39b-b239ef1857b8"
+    },
+    {
+      "parameters": {},
+      "name": "OpenAI GPT-4",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        600
+      ],
+      "id": "9643f5f7-2b5e-407d-be05-9a4a0a329d77"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "File Upload Webhook": {
+      "main": [
+        [
+          {
+            "node": "Detect File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect File Type": {
+      "main": [
+        [
+          {
+            "node": "AutoCAD API (for DWG/DXF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate to Japanese": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate to Chinese": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AutoCAD API (for DWG/DXF)": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Webhook": {
+      "main": [
+        [
+          {
+            "node": "Search Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "85eecf0b-03d3-4264-9f16-c4b9b339228f",
+  "meta": {
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "rzPsBuhYlJK5HLdx",
+  "tags": []
+}

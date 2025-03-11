@@ -1,0 +1,131 @@
+{
+  "name": "Resume_sh",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Fetch Resumes from Email",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2d0fadc3-d529-4f76-be21-a36bafedac69"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Save Resume to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 1,
+      "position": [
+        200,
+        0
+      ],
+      "id": "665a5c27-cf4c-4296-b3ce-3748f0df059e"
+    },
+    {
+      "parameters": {
+        "functionCode": "const jobSkills = ['Python', 'SQL', 'Machine Learning'];\nconst candidateSkills = $input.item.skills.split(', ');\nlet score = 0;\ncandidateSkills.forEach(skill => {\n    if (jobSkills.includes(skill)) {\n        score += 10;\n    }\n});\nreturn { score };"
+      },
+      "name": "Score Candidate",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "7dc928de-bb50-4ad1-b13b-21fd57622207"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "range": "A1",
+        "options": {}
+      },
+      "name": "Save Candidate Data to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "2436ced5-60c5-443e-9de6-1ede4d3645c5"
+    },
+    {
+      "parameters": {
+        "subject": "Shortlisted Candidate Alert",
+        "text": "Candidate {{$json[\"name\"]}} has been shortlisted with a score of {{$json[\"score\"]}}.\n\nReview the details in Google Sheets.",
+        "options": {}
+      },
+      "name": "Notify HR via Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "9de612af-5457-4f7c-b151-e258d6bcdc54"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Resumes from Email": {
+      "main": [
+        [
+          {
+            "node": "Save Resume to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Resume to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Candidate": {
+      "main": [
+        [
+          {
+            "node": "Save Candidate Data to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Candidate Data to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Notify HR via Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f004292e-8821-4242-80e5-87f0c044779a",
+  "meta": {
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "HLqtlI2LF6fqignK",
+  "tags": []
+}

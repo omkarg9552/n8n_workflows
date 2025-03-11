@@ -1,0 +1,125 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "myWebhook",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "1d171eb9-b3e4-4eb4-86bc-2169e2ae8839",
+      "name": "Webhook",
+      "webhookId": "960868eb-a42c-46a2-a7b9-d167b579f8ec",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "lsyjR2ygmGJ9Pugu",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Popup Example</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            text-align: center;\n            margin: 50px;\n        }\n\n        button {\n            padding: 10px 20px;\n            font-size: 16px;\n            cursor: pointer;\n        }\n\n        /* Popup Styling */\n        .popup {\n            display: none;\n            position: fixed;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%);\n            width: 300px;\n            padding: 20px;\n            background: white;\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);\n            text-align: center;\n            border-radius: 8px;\n            z-index: 1000;\n        }\n\n        .popup .close-btn {\n            position: absolute;\n            top: 10px;\n            right: 10px;\n            background: red;\n            color: white;\n            border: none;\n            padding: 5px 10px;\n            cursor: pointer;\n            border-radius: 5px;\n        }\n\n        /* Overlay Background */\n        .overlay {\n            display: none;\n            position: fixed;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n            background: rgba(0, 0, 0, 0.5);\n            z-index: 999;\n        }\n    </style>\n</head>\n<body>\n\n    <h2>Simple Popup Example</h2>\n    <button onclick=\"openPopup()\">Open Popup</button>\n\n    <!-- Popup Modal -->\n    <div class=\"overlay\" id=\"overlay\"></div>\n    <div class=\"popup\" id=\"popup\">\n        <button class=\"close-btn\" onclick=\"closePopup()\">X</button>\n        <h3>Hello {{ $('Webhook').item.json.query.firstName }}</h3>\n        <p>{{ $json.text }}</p>\n    </div>\n\n    <script>\n        function openPopup() {\n            document.getElementById('popup').style.display = 'block';\n            document.getElementById('overlay').style.display = 'block';\n        }\n\n        function closePopup() {\n            document.getElementById('popup').style.display = 'none';\n            document.getElementById('overlay').style.display = 'none';\n        }\n    </script>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        0
+      ],
+      "id": "133571e3-474a-495c-9368-af80c55a8560",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You receive a name and then write a funny short  100 word story about that name. Keep the story short and light! Avoid this any quote character(Since we are sending this in  JSON) Don't add any quote character \n\nThe name is : {{ $json.query.firstName }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -60,
+        0
+      ],
+      "id": "9afc5657-1927-40be-bc26-002943a09fdc",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 100
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        180
+      ],
+      "id": "ede7f1ae-8c42-4fbe-a298-7e0fd1250d14",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "AVmkFqtCSxYzwRmp",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dda04dca-d36f-4470-a0d3-3e357ba58cc7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "V5cYkxyhRhk2u1vG",
+  "tags": []
+}

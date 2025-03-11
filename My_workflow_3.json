@@ -1,0 +1,57 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8a11b838-0ea5-47be-97b7-a1842a38412c",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://jackreddy.app.n8n.cloud/webhook-test/myWebhook",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n\"api_key\":\"password\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "26aa77ae-268e-47ee-93e3-92f73d840f61",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b4fb5e1f-e743-49f1-bdb3-2294f72dc2cb",
+  "meta": {
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "LTHaiFYHePJm7ji1",
+  "tags": []
+}

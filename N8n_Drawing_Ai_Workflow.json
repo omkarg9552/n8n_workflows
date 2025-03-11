@@ -1,0 +1,233 @@
+{
+  "name": "N8n_Drawing_Ai_Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        100
+      ],
+      "id": "5eabd65d-6b7e-4d9a-a33d-5fff1ff0182a",
+      "webhookId": "a74082f1-eb57-4d1c-b05f-a4d66dde6ca0"
+    },
+    {
+      "parameters": {
+        "url": "https://vision.googleapis.com/v1/images:annotate?key=YOUR_GOOGLE_API_KEY",
+        "options": {}
+      },
+      "name": "Google Vision OCR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        100
+      ],
+      "id": "27695483-3795-4b05-8694-d9d1f759739f"
+    },
+    {
+      "parameters": {
+        "text": "{{$node[\"Google Vision OCR\"].json.responses[0].fullTextAnnotation.text}}"
+      },
+      "name": "Translate to Japanese",
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 1,
+      "position": [
+        40,
+        0
+      ],
+      "id": "320ae57a-cf47-4177-aea5-de0ead3af935"
+    },
+    {
+      "parameters": {
+        "text": "{{$node[\"Google Vision OCR\"].json.responses[0].fullTextAnnotation.text}}"
+      },
+      "name": "Translate to Chinese",
+      "type": "n8n-nodes-base.googleTranslate",
+      "typeVersion": 1,
+      "position": [
+        40,
+        200
+      ],
+      "id": "4f128fd1-d0b0-4ac2-b500-6796eebe5909"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "drawings",
+        "fields": [
+          "originalText",
+          "japaneseText",
+          "chineseText"
+        ],
+        "options": {}
+      },
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        240,
+        100
+      ],
+      "id": "e945e23e-3a35-49ca-a2dc-eac2bcf05773"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "query",
+        "options": {}
+      },
+      "name": "Query Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        380
+      ],
+      "id": "39ed0911-0dad-4d7f-b40d-22b6ebcdd08a",
+      "webhookId": "205c3480-838f-4410-a05b-c012873ee152"
+    },
+    {
+      "parameters": {
+        "collection": "drawings",
+        "options": {},
+        "query": "{\"originalText\": {\"$regex\": \"{{$json[\"body\"].query}}\"} }"
+      },
+      "name": "Search Database",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        240,
+        380
+      ],
+      "id": "03f248f1-87ec-4827-8bdf-b0eb5adbb02d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -160,
+        380
+      ],
+      "id": "b771edd9-176c-4edb-8021-9cf3643a75e1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        560
+      ],
+      "id": "e98bb1b3-79d6-4602-93f6-2244fc0c010d",
+      "name": "OpenRouter Chat Model"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Vision OCR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Vision OCR": {
+      "main": [
+        [
+          {
+            "node": "Translate to Japanese",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Translate to Chinese",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate to Japanese": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate to Chinese": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Search Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a083564e-1c7f-48c0-b676-fb8b011f71f4",
+  "meta": {
+    "instanceId": "d205a0d6aabe135179dc4ebcc8eccedde99074232e6d5ca650b9c3df2755cace"
+  },
+  "id": "A3W2Bj0WjIXieLDI",
+  "tags": []
+}
