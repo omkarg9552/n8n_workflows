@@ -1,0 +1,317 @@
+{
+  "name": "Phone Agent 1.0",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-call-trigger",
+        "options": {}
+      },
+      "name": "Call Trigger (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        180
+      ],
+      "webhookId": "webhook-call-trigger",
+      "id": "42fa1eea-ceaa-4501-b3ed-708d80eba8b7"
+    },
+    {
+      "parameters": {
+        "url": "https://api.elevenlabs.io/v1/speech-to-speech/...",
+        "options": {}
+      },
+      "name": "Speech-to-Text (ElevenLabs Scribe)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        -880,
+        180
+      ],
+      "id": "7c95edc7-73cd-456d-936c-673c4acc2e77"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "prompt": "You are an AI receptionist for a nail salon. The user said: '{{ $json.transcription }}'.\n\nDetermine the user's intent from the following options: BOOK_APPOINTMENT, CANCEL_APPOINTMENT, ASK_QUESTION.\nExtract the following entities if available: service, date, time, name.\n\nReturn a JSON object with the intent and entities. For example:\n{ \"intent\": \"BOOK_APPOINTMENT\", \"entities\": { \"service\": \"manicure\", \"date\": \"tomorrow\", \"time\": \"2pm\", \"name\": \"Jane\" } }",
+        "options": {},
+        "requestOptions": {}
+      },
+      "name": "AI Intent Recognition (OpenAI)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        180
+      ],
+      "id": "8a57008b-ea45-4859-860f-42ebaef97c7e",
+      "credentials": {
+        "openAiApi": {
+          "id": "lQ4lrtYojN1UVIws",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "name": "Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        160
+      ],
+      "id": "028298ee-b31f-4b98-8c23-7a08cb01de30"
+    },
+    {
+      "parameters": {
+        "calendar": "primary",
+        "start": "={{ $json.entities.date }} {{ $json.entities.time }}",
+        "end": "={{ $json.entities.date }} {{ $json.entities.time + ' + 1 hour' }}",
+        "additionalFields": {}
+      },
+      "name": "Create Google Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "1c909303-46d3-40a4-870f-ac0ce5aac4b2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "njKuRY916CRldpRY",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/...",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "name": "Text-to-Speech (ElevenLabs)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        20,
+        240
+      ],
+      "id": "9bfea96a-2c5f-45d8-ba8b-dd17d3648ab5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/YOUR_TWILIO_SID/Calls/{{ $json.call_sid }}.json",
+        "authentication": "predefined",
+        "options": {}
+      },
+      "name": "Send Voice Response (Twilio)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        220,
+        240
+      ],
+      "id": "c604d96a-d925-427c-9755-e3b70b76b516"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.entities.date }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "name": "Date/Time Provided?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        20
+      ],
+      "id": "15813813-1cb1-42a0-8c7e-e4017e727314"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Set 'Ask for Time' Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        200
+      ],
+      "id": "5938e5d6-6ac0-4709-b4ea-c80bf741f9ec"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Set 'Confirmation' Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        40,
+        0
+      ],
+      "id": "531664e3-4a72-4498-90ea-709a13685e4c"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Set 'Answer Hours' Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        380
+      ],
+      "id": "57876eff-c471-4868-a427-ca7a2b5eb71a"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Call Trigger (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Speech-to-Text (ElevenLabs Scribe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Speech-to-Text (ElevenLabs Scribe)": {
+      "main": [
+        [
+          {
+            "node": "AI Intent Recognition (OpenAI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Intent Recognition (OpenAI)": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Intent": {
+      "main": [
+        [
+          {
+            "node": "Date/Time Provided?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Answer Hours' Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date/Time Provided?": {
+      "main": [
+        [
+          {
+            "node": "Create Google Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Ask for Time' Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Ask for Time' Response": {
+      "main": [
+        [
+          {
+            "node": "Text-to-Speech (ElevenLabs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Set 'Confirmation' Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Confirmation' Response": {
+      "main": [
+        [
+          {
+            "node": "Text-to-Speech (ElevenLabs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Answer Hours' Response": {
+      "main": [
+        [
+          {
+            "node": "Text-to-Speech (ElevenLabs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text-to-Speech (ElevenLabs)": {
+      "main": [
+        [
+          {
+            "node": "Send Voice Response (Twilio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2c61b404-5534-4947-9060-9e055c725638",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d226c38fc294a0b06eb1d0c60c507e6da94f25f6006a8f75132b22418a604e6"
+  },
+  "id": "Vz72x6wqLQVm4TYU",
+  "tags": []
+}
